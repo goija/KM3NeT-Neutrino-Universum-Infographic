@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KM3NeT: Een Venster op het Neutrino Universum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #002A3E; /* Donkerblauw uit palet-variant */
+            color: #E0E0E0; /* Lichtgrijs voor tekst op donkere achtergrond */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Standaard max-width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Basishoogte */
+            max-height: 400px; /* Maximale hoogte */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .stat-value {
+            font-size: 3rem; /* Groter voor statistieken */
+            font-weight: 700;
+            color: #FFA600; /* Accentkleur oranje */
+        }
+        .section-title {
+            color: #FFA600; /* Accentkleur oranje */
+        }
+        .card {
+            background-color: #003F5C; /* Donkerblauw voor kaarten */
+            color: #E0E0E0;
+            border: 1px solid #2F4B7C; /* Randkleur */
+        }
+        .flowchart-step {
+            background-color: #2F4B7C;
+            border-color: #665191;
+        }
+        .flowchart-arrow {
+            color: #FFA600;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #FFA600;
+            border: 3px solid #002A3E;
+        }
+        .table-header {
+            background-color: #2F4B7C;
+        }
+        .table-cell {
+            border-color: #665191;
+        }
+        /* Kleurenpalet "Brilliant Blues" met accenten */
+        /* Primair: #003F5C, #2F4B7C, #665191 */
+        /* Accenten: #FFA600 (oranje), #F95D6A (roze/rood), #FF7C43 (oranjerood) */
+        /* Achtergrond: #002A3E (pagina), #003F5C (kaarten) */
+        /* Tekst: #E0E0E0 (lichtgrijs) */
+    </style>
+    <!--
+    Infographic Plan & Narrative:
+    1. Introductie KM3NeT: Wat, Waarom neutrino's, Waarom diepzee.
+    2. Technologie: Detectieproces (flowchart), Multi-PMT DOM.
+    3. ARCA & ORCA: Vergelijking, status, key-events.
+    4. KM3NeT in GNN: Vergelijking met IceCube/Baikal, hemeldekking, UHE-spanning.
+    5. Wetenschappelijke Hoogtepunten & Toekomst: Tijdlijn, doelen, visie.
+    6. Aanvullende Wetenschap: Aard- en mariene wetenschappen.
+    Chosen Color Palette: "Brilliant Blues" (#003F5C, #2F4B7C, #665191) with accents (#FFA600, #F95D6A, #FF7C43).
+
+    Visualization Choices (Confirming NO SVG, NO MERMAID JS):
+    - Sectie 1:
+      - Projectomvang: Single Big Number (Text). Goal: Inform. Method: HTML/CSS.
+      - Iconen: Unicode karakters. Goal: Inform. Method: HTML/CSS.
+    - Sectie 2:
+      - Detectieproces: Flow Chart. Goal: Organize. Method: HTML/CSS (Tailwind).
+      - Multi-PMT DOM: Gestileerde weergave. Goal: Inform. Method: HTML/CSS.
+    - Sectie 3:
+      - ARCA vs ORCA tabel: HTML Table. Goal: Organize. Method: HTML.
+      - DU Status (ARCA & ORCA): Donut Chart. Goal: Inform. Library: Chart.js (Canvas).
+      - ~220 PeV Event: Single Big Number (Text). Goal: Inform. Method: HTML/CSS.
+    - Sectie 4:
+      - Detector Volumes: Bar Chart. Goal: Compare. Library: Chart.js (Canvas).
+      - Detector Kenmerken: HTML Table. Goal: Organize. Method: HTML.
+      - Hemeldekking: Conceptuele tekst/layout. Goal: Inform. Method: HTML/CSS.
+    - Sectie 5:
+      - Tijdlijn: Vertical Timeline. Goal: Change/Organize. Method: HTML/CSS (Tailwind).
+      - Wetenschappelijke doelen: HTML List. Goal: Organize. Method: HTML.
+    - Sectie 6:
+      - Iconen: Unicode karakters. Goal: Inform. Method: HTML/CSS.
+
+    Confirmation: NEITHER Mermaid JS NOR SVG were used anywhere in this output.
+    All diagrams (flowcharts, timelines) are implemented using structured HTML and CSS with Tailwind.
+    All charts are rendered to Canvas using Chart.js.
+    -->
+</head>
+<body>
+    <header class="bg-[#003F5C] text-white py-8 text-center shadow-lg">
+        <h1 class="text-4xl md:text-5xl font-bold text-[#FFA600]">KM3NeT: Een Venster op het Neutrino Universum</h1>
+        <p class="text-xl mt-2 text-[#E0E0E0]">De geheimen van de kosmos ontrafelen vanuit de diepten van de Middellandse Zee</p>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="intro" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-center section-title">Wat is KM3NeT? 🔭</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="card rounded-lg shadow-xl p-6">
+                    <p class="text-lg mb-4">
+                        KM3NeT (Cubic Kilometre Neutrino Telescope) is een revolutionaire, grootschalige onderzoeksinfrastructuur die op de bodem van de Middellandse Zee wordt gebouwd. Dit Europese project, met componenten voor de kust van Frankrijk en Italië, is ontworpen om kosmische neutrino's met ongekende precisie te detecteren.
+                    </p>
+                    <p class="text-lg">
+                        Zoals Paschal Coyle, voormalig directeur van de KM3NeT-samenwerking, het stelde: "We bouwen de grootste 'telescoop' ter wereld, maar niemand zal hem ooit zien." Het doel is een nieuw venster te openen op de meest energetische verschijnselen in het heelal.
+                    </p>
+                </div>
+                <div class="card rounded-lg shadow-xl p-6 text-center">
+                    <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">Kernfeiten</h3>
+                    <p class="text-5xl font-bold text-[#F95D6A]">~1 km³</p>
+                    <p class="text-lg mt-1">Doelvolume ARCA detector</p>
+                    <p class="text-5xl font-bold mt-4 text-[#F95D6A]">Diepzee</p>
+                    <p class="text-lg mt-1">Locatie: Middellandse Zee (tot 3500m diep)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                <div class="card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">Waarom Neutrino's? ✨</h3>
+                    <p class="text-lg">
+                        Neutrino's zijn ongrijpbare elementaire deeltjes met een extreem kleine massa en geen elektrische lading. Ze interageren nauwelijks met materie en reizen in rechte lijnen, waardoor ze unieke 'boodschappers' zijn. Ze dragen directe informatie vanuit het hart van astrofysische fenomenen zoals supernova's en actieve galactische kernen, die voor licht verborgen blijven.
+                    </p>
+                </div>
+                <div class="card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">Waarom de Diepzee? 🌊</h3>
+                    <p class="text-lg">
+                        De grote waterdiepte biedt cruciale afscherming tegen storende kosmische straling (atmosferische muonen). Het minimaliseert ook biologisch licht (bioluminescentie). Bovendien zijn de optische eigenschappen van diep Mediterraan zeewater, zoals lage verstrooiing, gunstig voor het nauwkeurig reconstrueren van deeltjessporen.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="technology" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">De Technologie Achter de Ontdekking 💡</h2>
+            <div class="card rounded-lg shadow-xl p-6 mb-8">
+                <h3 class="text-2xl font-semibold mb-4 text-center text-[#FFA600]">Hoe Werkt Neutrinodetectie?</h3>
+                <p class="text-lg mb-6 text-center">KM3NeT detecteert neutrino's indirect via het zwakke, blauwachtige Cherenkovlicht, geproduceerd wanneer een neutrino interageert in het water.</p>
+                <div class="flex flex-col md:flex-row justify-around items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flowchart-step text-center p-4 rounded-lg border-2 w-full md:w-1/5">
+                        <p class="font-semibold">1. Neutrino Interactie</p>
+                        <p class="text-sm">Een neutrino botst met een atoomkern in het zeewater.</p>
+                    </div>
+                    <div class="text-2xl flowchart-arrow hidden md:block">&rarr;</div>
+                    <div class="text-2xl flowchart-arrow md:hidden">&darr;</div>
+                    <div class="flowchart-step text-center p-4 rounded-lg border-2 w-full md:w-1/5">
+                        <p class="font-semibold">2. Geladen Deeltje</p>
+                        <p class="text-sm">Een hoogenergetisch geladen deeltje (bv. muon) ontstaat.</p>
+                    </div>
+                    <div class="text-2xl flowchart-arrow hidden md:block">&rarr;</div>
+                    <div class="text-2xl flowchart-arrow md:hidden">&darr;</div>
+                    <div class="flowchart-step text-center p-4 rounded-lg border-2 w-full md:w-1/5">
+                        <p class="font-semibold">3. Cherenkovlicht</p>
+                        <p class="text-sm">Het deeltje zendt Cherenkovlicht uit als het sneller dan licht in water beweegt.</p>
+                    </div>
+                    <div class="text-2xl flowchart-arrow hidden md:block">&rarr;</div>
+                    <div class="text-2xl flowchart-arrow md:hidden">&darr;</div>
+                    <div class="flowchart-step text-center p-4 rounded-lg border-2 w-full md:w-1/5">
+                        <p class="font-semibold">4. DOM Detectie</p>
+                        <p class="text-sm">Lichtgevoelige DOMs detecteren de fotonen.</p>
+                    </div>
+                     <div class="text-2xl flowchart-arrow hidden md:block">&rarr;</div>
+                    <div class="text-2xl flowchart-arrow md:hidden">&darr;</div>
+                    <div class="flowchart-step text-center p-4 rounded-lg border-2 w-full md:w-1/5">
+                        <p class="font-semibold">5. Reconstructie</p>
+                        <p class="text-sm">Data analyseert richting en energie van het neutrino.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card rounded-lg shadow-xl p-6">
+                <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">De Innovatieve Multi-PMT Digitale Optische Module (DOM)</h3>
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-full md:w-2/3">
+                        <p class="text-lg mb-2">
+                            Elke KM3NeT Digitale Optische Module (DOM) is een glazen bol van ~44 cm diameter, met daarin <span class="font-bold text-[#FFA600]">31 kleine (3-inch) fotomultiplicatorbuizen (PMT's)</span>. Dit multi-PMT ontwerp is een paradigmaverschuiving.
+                        </p>
+                        <ul class="list-disc list-inside text-lg space-y-1">
+                            <li>Verbeterde richtingsgevoeligheid per module.</li>
+                            <li>Betere telling van individuele fotonen.</li>
+                            <li>Verhoogde redundantie en betrouwbaarheid.</li>
+                            <li>Bijna isotroop (gelijkmatig in alle richtingen) gezichtsveld.</li>
+                        </ul>
+                        <p class="text-lg mt-2">Deze innovatie leidt tot een significant betere reconstructie van deeltjessporen en een superieure hoekresolutie, cruciaal voor neutrino-astronomie.</p>
+                    </div>
+                    <div class="w-full md:w-1/3 flex justify-center items-center p-4">
+                        <div class="relative w-48 h-48 bg-[#665191] rounded-full flex justify-center items-center border-4 border-[#A05195]">
+                            <span class="text-white text-lg font-semibold">DOM</span>
+                            <div class="absolute w-6 h-6 bg-[#FFA600] rounded-full" style="top: 5px; left: 45%;"></div>
+                            <div class="absolute w-5 h-5 bg-[#FFA600] rounded-full" style="top: 20px; left: 15%;"></div>
+                            <div class="absolute w-5 h-5 bg-[#FFA600] rounded-full" style="top: 20px; right: 15%;"></div>
+                            <div class="absolute w-6 h-6 bg-[#FFA600] rounded-full" style="bottom: 5px; left: 45%;"></div>
+                            <div class="absolute w-5 h-5 bg-[#FFA600] rounded-full" style="bottom: 20px; left: 15%;"></div>
+                            <div class="absolute w-5 h-5 bg-[#FFA600] rounded-full" style="bottom: 20px; right: 15%;"></div>
+                            <div class="absolute w-5 h-5 bg-[#FFA600] rounded-full" style="left: 5px; top: 45%;"></div>
+                            <div class="absolute w-5 h-5 bg-[#FFA600] rounded-full" style="right: 5px; top: 45%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="detectors" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">Twee Detectoren, Twee Missies: ARCA & ORCA 🎯</h2>
+            <p class="text-xl text-center mb-8">KM3NeT bestaat uit twee gespecialiseerde detectoren, ARCA en ORCA, die dezelfde kerntechnologie gebruiken maar geoptimaliseerd zijn voor verschillende wetenschappelijke doelen, en zo een breed energiespectrum bestrijken.</p>
+            <div class="card rounded-lg shadow-xl p-0 overflow-x-auto mb-8">
+                <table class="w-full text-left">
+                    <thead class="table-header">
+                        <tr>
+                            <th class="p-3">Kenmerk</th>
+                            <th class="p-3">ARCA (Astroparticle Research with Cosmics in the Abyss)</th>
+                            <th class="p-3">ORCA (Oscillation Research with Cosmics in the Abyss)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b table-cell"><td class="p-3 font-semibold">Locatie</td><td class="p-3">Offshore Sicilië, Italië</td><td class="p-3">Offshore Toulon, Frankrijk</td></tr>
+                        <tr class="border-b table-cell"><td class="p-3 font-semibold">Diepte</td><td class="p-3">~3500 m</td><td class="p-3">~2450 m</td></tr>
+                        <tr class="border-b table-cell"><td class="p-3 font-semibold">Primair Doel</td><td class="p-3">Hoogenergetische neutrinoastronomie (TeV-PeV bronnen)</td><td class="p-3">Neutrino-massaordening, oscillaties (GeV)</td></tr>
+                        <tr class="border-b table-cell"><td class="p-3 font-semibold">Volume/Massa</td><td class="p-3">~1 km³ (ijl)</td><td class="p-3">~7 Mton (dicht)</td></tr>
+                        <tr class="border-b table-cell"><td class="p-3 font-semibold">Geplande DU's</td><td class="p-3">230 (2x115)</td><td class="p-3">115</td></tr>
+                        <tr class="border-b table-cell"><td class="p-3 font-semibold">DOMs per DU</td><td class="p-3">18</td><td class="p-3">18</td></tr>
+                        <tr><td class="p-3 font-semibold">DU Afstand</td><td class="p-3">~90-100 m</td><td class="p-3">~20 m</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">ARCA: Jacht op Kosmische Versnellers</h3>
+                    <p class="text-lg mb-4">ARCA is ontworpen om de bronnen van de meest energetische neutrino's (TeV-PeV) te identificeren, zoals actieve galactische kernen (AGN's) en supernova's. Het doel is de oorsprong van ultrahoogenergetische kosmische straling te onthullen.</p>
+                    <div class="text-center mb-4">
+                        <p class="text-sm">Operationele Detectie Eenheden (DU's) (stand okt/nov 2024):</p>
+                        <div class="chart-container mx-auto h-64 md:h-72">
+                            <canvas id="arcaStatusChart"></canvas>
+                        </div>
+                    </div>
+                    <p class="text-lg font-semibold text-center text-[#F95D6A]">Belangrijke Prestatie: Detectie van een ~220 PeV neutrino op 13 feb 2023 – het meest energetische ooit!</p>
+                </div>
+
+                <div class="card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">ORCA: Ontrafelen van Neutrino Eigenschappen</h3>
+                    <p class="text-lg mb-4">ORCA focust op lagerenergetische atmosferische neutrino's (GeV) om fundamentele eigenschappen te bestuderen, met name de neutrino-massaordening (NMO) – een sleutelmysterie in de deeltjesfysica.</p>
+                     <div class="text-center mb-4">
+                        <p class="text-sm">Operationele Detectie Eenheden (DU's) (stand okt/nov 2024):</p>
+                        <div class="chart-container mx-auto h-64 md:h-72">
+                            <canvas id="orcaStatusChart"></canvas>
+                        </div>
+                    </div>
+                    <p class="text-lg font-semibold text-center text-[#FF7C43]">Doel: Bepalen of de derde neutrino-massatoestand zwaarder of lichter is dan de eerste twee.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="global-network" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">KM3NeT in het Wereldwijde Neutrino Netwerk 🌍</h2>
+            <p class="text-xl text-center mb-8">KM3NeT is een cruciale speler in het Global Neutrino Network (GNN), samenwerkend met andere grote detectoren zoals IceCube (Zuidpool) en Baikal-GVD (Siberië) om de volledige hemel te monitoren.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">Vergelijking Detector Volumes (Gepland/Huidig)</h3>
+                    <p class="text-lg mb-4">Grotere volumes verhogen de kans op detectie van zeldzame hoogenergetische neutrino's.</p>
+                    <div class="chart-container mx-auto h-80">
+                        <canvas id="volumeComparisonChart"></canvas>
+                    </div>
+                </div>
+                <div class="card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-3 text-[#FFA600]">Unieke Voordelen KM3NeT</h3>
+                     <ul class="list-disc list-inside text-lg space-y-2">
+                        <li><strong class="text-[#FF7C43]">Locatie:</strong> Noordelijk halfrond, optimaal zicht op o.a. het Galactisch Centrum.</li>
+                        <li><strong class="text-[#FF7C43]">Precisie:</strong> Potentieel superieure hoekresolutie dankzij watermedium en multi-PMT DOMs.</li>
+                        <li><strong class="text-[#FF7C43]">Technologie:</strong> Innovatief multi-PMT ontwerp.</li>
+                    </ul>
+                    <div class="mt-6 bg-[#2F4B7C] p-4 rounded-lg">
+                        <h4 class="text-xl font-semibold text-[#F95D6A]">De ~220 PeV Spanning</h4>
+                        <p class="text-md mt-1">De detectie van het ~220 PeV neutrino door KM3NeT/ARCA, een energie waar IceCube (met langere operatietijd) geen bevestigde events heeft, creëert een "statistische spanning". Dit stimuleert onderzoek naar UHE-neutrinobronnen en detectorcapaciteiten.</p>
+                    </div>
+                </div>
+            </div>
+             <div class="card rounded-lg shadow-xl p-6 mt-8">
+                <h3 class="text-2xl font-semibold mb-3 text-center text-[#FFA600]">Complementaire Hemeldekking</h3>
+                <p class="text-lg text-center">Door geografische spreiding (Middellandse Zee, Zuidpool, Siberië) bewaken de GNN-detectoren bijna continu de gehele hemel. Dit is essentieel voor het detecteren van transiënte (kortstondige) astrofysische gebeurtenissen en maximaliseert het ontdekkingspotentieel via multi-messenger astronomie.</p>
+            </div>
+        </section>
+
+        <section id="highlights-future" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">Wetenschappelijke Hoogtepunten & Toekomst 🚀</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-[#FFA600]">Tijdlijn van Belangrijke Mijlpalen</h3>
+                    <div class="relative border-l-4 border-[#665191] pl-6 space-y-8">
+                        <div class="timeline-item relative">
+                            <h4 class="font-semibold text-lg text-[#FF7C43]">2012-2015</h4>
+                            <p class="text-md">Projectlancering, eerste infrastructuur en prototypes.</p>
+                        </div>
+                        <div class="timeline-item relative">
+                            <h4 class="font-semibold text-lg text-[#FF7C43]">2016-2022</h4>
+                            <p class="text-md">Start bouw ARCA & ORCA, eerste data met deeldetectoren (ORCA6, ARCA21).</p>
+                        </div>
+                        <div class="timeline-item relative">
+                            <h4 class="font-semibold text-lg text-[#FF7C43]">13 Feb 2023</h4>
+                            <p class="text-md">ARCA21 detecteert recordbrekend ~220 PeV neutrino.</p>
+                        </div>
+                        <div class="timeline-item relative">
+                            <h4 class="font-semibold text-lg text-[#FF7C43]">2024-2025</h4>
+                            <p class="text-md">Voortdurende uitbouw; status (okt '24): 33 ARCA DU's, 24 ORCA DU's operationeel.</p>
+                        </div>
+                        <div class="timeline-item relative">
+                            <h4 class="font-semibold text-lg text-[#FF7C43]">~2028</h4>
+                            <p class="text-md">Verwachte voltooiing volledige KM3NeT-detector.</p>
+                        </div>
+                         <div class="timeline-item relative">
+                            <h4 class="font-semibold text-lg text-[#FF7C43]">Na 2028</h4>
+                            <p class="text-md">Geplande operationele fase van >15 jaar voor precisiewetenschap.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-[#FFA600]">Belangrijkste Wetenschappelijke Doelen</h3>
+                    <ul class="list-disc list-inside space-y-2 text-lg">
+                        <li>Identificeren van bronnen van hoogenergetische kosmische neutrino's (ARCA).</li>
+                        <li>Bepalen van de neutrino-massaordening (NMO) (ORCA).</li>
+                        <li>Precies meten van neutrino-oscillatieparameters (ORCA).</li>
+                        <li>Zoeken naar donkere materie en fysica voorbij het Standaardmodel.</li>
+                        <li>Bijdragen aan multi-messenger astronomie (MMA) door snelle alerts.</li>
+                        <li>Langetermijnmonitoring voor aard- en mariene wetenschappen.</li>
+                    </ul>
+                    <h3 class="text-2xl font-semibold mt-6 mb-3 text-[#FFA600]">Toekomstvisie</h3>
+                    <p class="text-lg">Na voltooiing rond 2028 zal KM3NeT een toonaangevende faciliteit zijn, die decennialang de grenzen van ons begrip van neutrino's en het hoogenergetische universum verlegt. Het zal een precisie-instrument worden voor neutrino-astronomie, de neutrinohemel gedetailleerd in kaart brengen en cruciaal zijn voor het MMA-tijdperk.</p>
+                </div>
+            </div>
+        </section>
+
+         <section id="additional-science" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 text-center section-title">Meer dan Alleen Neutrino's 🐠🌏</h2>
+            <div class="card rounded-lg shadow-xl p-6">
+                <p class="text-lg text-center">
+                    De KM3NeT-infrastructuur, als onderdeel van het EMSO-netwerk (European Multidisciplinary Seafloor and Water Column Observatory), biedt unieke mogelijkheden voor continue, real-time monitoring van de diepzee. Dit ondersteunt onderzoek in:
+                </p>
+                <div class="flex justify-around items-center mt-6 text-center">
+                    <div>
+                        <span class="text-5xl">🌊</span>
+                        <p class="mt-2 text-lg font-semibold">Oceanografie</p>
+                    </div>
+                    <div>
+                        <span class="text-5xl">🌍</span>
+                        <p class="mt-2 text-lg font-semibold">Geofysica</p>
+                    </div>
+                    <div>
+                        <span class="text-5xl">🐟</span>
+                        <p class="mt-2 text-lg font-semibold">Mariene Biologie</p>
+                    </div>
+                     <div>
+                        <span class="text-5xl">🌡️</span>
+                        <p class="mt-2 text-lg font-semibold">Klimaatstudies</p>
+                    </div>
+                </div>
+                 <p class="text-lg text-center mt-6">ORCA kan zelfs bijdragen aan aardtomografie door het bestuderen van neutrino-oscillaties door de Aarde.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#003F5C] text-center py-6 mt-12 border-t border-[#2F4B7C]">
+        <p class="text-sm text-[#A0A0A0]">Infographic gebaseerd op het KM3NeT-project en openbare onderzoeksrapporten.</p>
+        <p class="text-sm text-[#A0A0A0]">Bronvermelding inspiratie: "Alles over Sterrenkunde" (Govert Schilling) en KM3NeT-publicaties.</p>
+        <p class="text-xs text-[#A0A0A0] mt-2">Dit is een gesimuleerde infographic voor demonstratiedoeleinden.</p>
+    </footer>
+
+    <script>
+        function wrapLabels(label, maxLength = 16) {
+            if (typeof label !== 'string') return label;
+            if (label.length <= maxLength) return label;
+
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#E0E0E0',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    },
+                    backgroundColor: '#002A3E',
+                    titleColor: '#FFA600',
+                    bodyColor: '#E0E0E0',
+                    borderColor: '#2F4B7C',
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#E0E0E0', font: { size: 10 } },
+                    grid: { color: 'rgba(224, 224, 224, 0.2)' }
+                },
+                y: {
+                    ticks: { color: '#E0E0E0', font: { size: 10 } },
+                    grid: { color: 'rgba(224, 224, 224, 0.2)' }
+                }
+            }
+        };
+        
+        const commonPieDonutOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: '#E0E0E0',
+                        font: { size: 12 },
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                     callbacks: {
+                        title: tooltipTitleCallback,
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed;
+                                if (context.dataset.dataSum) { // Voor percentage in donut
+                                     label += ' (' + ((context.parsed / context.dataset.dataSum) * 100).toFixed(1) + '%)';
+                                }
+                            }
+                            return label;
+                        }
+                    },
+                    backgroundColor: '#002A3E',
+                    titleColor: '#FFA600',
+                    bodyColor: '#E0E0E0',
+                    borderColor: '#2F4B7C',
+                    borderWidth: 1
+                }
+            }
+        };
+
+
+        // ARCA Status Chart (Donut)
+        const arcaTotalDUs = 230;
+        const arcaOperationalDUs = 33;
+        const arcaData = {
+            labels: ['Operationeel', 'Gepland'],
+            datasets: [{
+                label: 'ARCA Detectie Eenheden',
+                data: [arcaOperationalDUs, arcaTotalDUs - arcaOperationalDUs],
+                backgroundColor: ['#FFA600', '#665191'],
+                borderColor: '#003F5C',
+                borderWidth: 2,
+                hoverOffset: 4,
+                dataSum: arcaTotalDUs // Custom property for percentage calculation
+            }]
+        };
+        new Chart(document.getElementById('arcaStatusChart'), {
+            type: 'doughnut',
+            data: arcaData,
+            options: commonPieDonutOptions
+        });
+
+        // ORCA Status Chart (Donut)
+        const orcaTotalDUs = 115;
+        const orcaOperationalDUs = 24;
+        const orcaData = {
+            labels: ['Operationeel', 'Gepland'],
+            datasets: [{
+                label: 'ORCA Detectie Eenheden',
+                data: [orcaOperationalDUs, orcaTotalDUs - orcaOperationalDUs],
+                backgroundColor: ['#F95D6A', '#2F4B7C'],
+                borderColor: '#003F5C',
+                borderWidth: 2,
+                hoverOffset: 4,
+                dataSum: orcaTotalDUs // Custom property for percentage calculation
+            }]
+        };
+        new Chart(document.getElementById('orcaStatusChart'), {
+            type: 'doughnut',
+            data: orcaData,
+            options: commonPieDonutOptions
+        });
+
+        // Volume Comparison Chart (Bar)
+        const volumeData = {
+            labels: [
+                wrapLabels('KM3NeT/ARCA (gepland)'), 
+                wrapLabels('IceCube'), 
+                wrapLabels('Baikal-GVD (2023, groeiend)')
+            ],
+            datasets: [{
+                label: 'Geïnstrumenteerd Volume (km³)',
+                data: [1, 1, 0.5],
+                backgroundColor: ['#FFA600', '#F95D6A', '#FF7C43'],
+                borderColor: '#003F5C',
+                borderWidth: 1
+            }]
+        };
+        const volumeComparisonOptions = { ...commonChartOptions };
+        volumeComparisonOptions.scales.y.title = { display: true, text: 'Volume (km³)', color: '#E0E0E0' };
+        
+        new Chart(document.getElementById('volumeComparisonChart'), {
+            type: 'bar',
+            data: volumeData,
+            options: volumeComparisonOptions
+        });
+
+    </script>
+</body>
+</html>
